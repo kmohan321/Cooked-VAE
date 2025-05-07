@@ -13,7 +13,7 @@ class VAEConfig:
     epochs:int = 500
     batch: int = 32
     image_size:int = 128
-    folder_path:str = "F:\dataset"
+    folder_path:str = "image folder path"
     train_split:float = 0.9
     
     
