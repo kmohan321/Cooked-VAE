@@ -62,7 +62,7 @@ Here are some results from the model, showing the image reconstruction and gener
 ### Input Image and Reconstruction
 
 - **Input Image**:
-  ![Input Image](images\original_vs_generated32.png)
+  ![Input Image](images/original_vs_generated32.png)
 
 
 
