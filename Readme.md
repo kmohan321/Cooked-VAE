@@ -1,89 +1,69 @@
-# VAE: Variational Autoencoder
+# Variational Autoencoder (VAE) Project
 
-## Project Overview
+## Overview
 
-This project implements a Variational Autoencoder (VAE) from scratch for fun and learning, aiming to experiment with the training process and the architecture itself.
+This project implements a Variational Autoencoder (VAE) from scratch for educational purposes and experimentation. The focus is on understanding the fundamentals of VAEs, optimizing the training process, and exploring architectural design choices.
 
 ## Features
 
 - Custom-built VAE architecture
-- Image reconstruction and generation
+- Image reconstruction and generation capabilities 
 - Experiment tracking with Weights & Biases (wandb)
-- Trained on $128 \times 128$ images with approximately 12 million parameters
-- Trained on about 15,000 images
+- Trained on 128×128 pixel images
+- Approximately 12 million parameters
+- Dataset of ~15,000 images
 
-## ELBO Mathematics
+## Mathematical Foundation: ELBO
 
-The Evidence Lower Bound (ELBO) for a Variational Autoencoder can be derived as follows:
+The Evidence Lower Bound (ELBO) for a Variational Autoencoder is derived as follows:
 
-Given a data point \(x\) and latent variable \(z\), the marginal likelihood can be written as:
+Given a data point $x$ and latent variable $z$, the marginal likelihood can be written as:
 
-\[
-\log p(x) = \log \int p(x, z) \, dz
-\]
+$$\log p(x) = \log \int p(x, z) \, dz$$
 
-Since the integral is intractable, we approximate it using a variational distribution \(q(z|x)\) and apply Jensen's inequality:
+Since this integral is intractable, we approximate using a variational distribution $q(z|x)$ and apply Jensen's inequality:
 
-\[
-\log p(x) = \log \int q(z|x) \frac{p(x, z)}{q(z|x)} \, dz
-\]
+$$\log p(x) = \log \int q(z|x) \frac{p(x, z)}{q(z|x)} \, dz$$
 
-By applying Jensen's inequality to the logarithm of the expectation, we obtain:
+$$\log p(x) \geq \mathbb{E}_{q(z|x)} \left[ \log \frac{p(x, z)}{q(z|x)} \right]$$
 
-\[
-\log p(x) \geq \mathbb{E}_{q(z|x)} \left[ \log \frac{p(x, z)}{q(z|x)} \right]
-\]
+This inequality gives us the Evidence Lower Bound (ELBO):
 
-This inequality gives the Evidence Lower Bound (ELBO):
+$$\text{ELBO} = \mathbb{E}_{q(z|x)} [\log p(x|z)] - \text{KL}(q(z|x) \parallel p(z))$$
 
-\[
-\text{ELBO} = \mathbb{E}_{q(z|x)} [\log p(x|z)] - \text{KL}(q(z|x) \parallel p(z))
-\]
-
-### Explanation:
+### Components Explained:
 
 1. **Reconstruction Term:**  
-   - The first term, \(\mathbb{E}_{q(z|x)} [\log p(x|z)]\), represents the expected log-likelihood of the data given the latent variable, encouraging accurate reconstruction.
+   $\mathbb{E}_{q(z|x)} [\log p(x|z)]$ represents the expected log-likelihood of the data given the latent variable, encouraging accurate reconstruction.
 
 2. **Regularization Term:**  
-   - The second term, \(- \text{KL}(q(z|x) \parallel p(z))\), is the Kullback–Leibler divergence that regularizes the latent space by minimizing the difference between the approximate posterior \(q(z|x)\) and the prior \(p(z)\).
-
-Thus, the ELBO maximizes both reconstruction accuracy and latent space regularization.
+   $-\text{KL}(q(z|x) \parallel p(z))$ is the Kullback–Leibler divergence that regularizes the latent space by minimizing the difference between the approximate posterior $q(z|x)$ and the prior $p(z)$.
 
 ## Model Architecture
 
-The VAE model consists of an encoder and decoder network:
+The VAE consists of two main components:
 
-- **Encoder**: Learns a probabilistic latent representation of the input data.
-- **Decoder**: Reconstructs the image from the latent representation.
-- **Latent Space**: Gaussian distribution with learned mean and variance (typically prior is fixed).
+- **Encoder**: Transforms input data into a probabilistic latent representation
+- **Decoder**: Reconstructs the original data from samples in the latent space
+- **Latent Space**: Gaussian distribution with learned mean and variance parameters
 
-## Training
+## Training Methodology
 
-The training process minimizes the Evidence Lower Bound (ELBO) loss, which is the sum of the reconstruction loss and KL divergence:
+The training process minimizes the Evidence Lower Bound (ELBO) loss:
 
-$$ \text{loss} = \text{reconstruction loss} + \text{LPIPS loss} + \beta \times \text{KL divergence} $$
+$$\text{Loss} = \text{Reconstruction Loss} + \text{LPIPS Loss} + \beta \times \text{KL Divergence}$$
 
-In this implementation, the following modifications were made:
+### Implementation Details:
 
-### Loss Functions:
-
-- **LPIPS loss** is used for perceptual similarity, capturing perceptual differences effectively.
-- **L1 loss** is used for reconstruction as it provides a stronger signal response compared to MSE loss.
-
-### KL Divergence Regularization:
-
-- A **beta** value of 0.02 is used to scale the KL divergence, ensuring balanced regularization without excessive latent compression.
+- **LPIPS loss**: Used for perceptual similarity, capturing human-perceived differences more effectively
+- **L1 loss**: Implemented for reconstruction as it provides stronger signal response compared to MSE loss
+- **Beta factor**: Set to 0.02 to scale KL divergence, ensuring balanced regularization without excessive latent compression
 
 ## Results
 
-Here are some results from the model, showing the image reconstruction and generation.
+Below are sample results showing original images alongside their reconstructions:
 
-### Input Image and Reconstruction
+![Input and Reconstructed Image](images/original_vs_generated32.png)
 
-  ![Input Image](images/original_vs_generated32.png)
-
-  ![Input Image](images/original_vs_generated100.png)
-
-
+![Input and Reconstructed Image](images/original_vs_generated100.png)
 
