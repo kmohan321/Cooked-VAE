@@ -16,19 +16,39 @@ This project implements a Variational Autoencoder (VAE) from scratch for fun and
 
 The Evidence Lower Bound (ELBO) for a Variational Autoencoder can be derived as follows:
 
-Given a data point $x$ and latent variable $z$, the marginal likelihood can be written as:
+Given a data point \(x\) and latent variable \(z\), the marginal likelihood can be written as:
 
-$$ \log p(x) = \log \int p(x|z) , p(z) , dz $$
+\[
+\log p(x) = \log \int p(x, z) \, dz
+\]
 
-Since the integral is intractable, we approximate it using a variational distribution $q(z|x)$:
+Since the integral is intractable, we approximate it using a variational distribution \(q(z|x)\) and apply Jensen's inequality:
 
-$$ \log p(x) = \mathbb{E}_{q(z|x)} \left[ \log \frac{p(x|z) , p(z)}{q(z|x)} \right] + \text{KL}(q(z|x) \parallel p(z|x)) $$
+\[
+\log p(x) = \log \int q(z|x) \frac{p(x, z)}{q(z|x)} \, dz
+\]
 
-The ELBO can then be written as:
+By applying Jensen's inequality to the logarithm of the expectation, we obtain:
 
-$$ \text{ELBO} = \mathbb{E}_{q(z|x)} [\log p(x|z)] - \text{KL}(q(z|x) \parallel p(z)) $$
+\[
+\log p(x) \geq \mathbb{E}_{q(z|x)} \left[ \log \frac{p(x, z)}{q(z|x)} \right]
+\]
 
-The first term is the reconstruction loss, and the second term is the KL divergence that regularizes the latent space to match the prior distribution.
+This inequality gives the Evidence Lower Bound (ELBO):
+
+\[
+\text{ELBO} = \mathbb{E}_{q(z|x)} [\log p(x|z)] - \text{KL}(q(z|x) \parallel p(z))
+\]
+
+### Explanation:
+
+1. **Reconstruction Term:**  
+   - The first term, \(\mathbb{E}_{q(z|x)} [\log p(x|z)]\), represents the expected log-likelihood of the data given the latent variable, encouraging accurate reconstruction.
+
+2. **Regularization Term:**  
+   - The second term, \(- \text{KL}(q(z|x) \parallel p(z))\), is the Kullback–Leibler divergence that regularizes the latent space by minimizing the difference between the approximate posterior \(q(z|x)\) and the prior \(p(z)\).
+
+Thus, the ELBO maximizes both reconstruction accuracy and latent space regularization.
 
 ## Model Architecture
 
@@ -61,8 +81,9 @@ Here are some results from the model, showing the image reconstruction and gener
 
 ### Input Image and Reconstruction
 
-- **Input Image**:
   ![Input Image](images/original_vs_generated32.png)
+
+  ![Input Image](images/original_vs_generated100.png)
 
 
 
